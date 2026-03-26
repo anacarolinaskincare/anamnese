@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Anamnese · Ana Carolina Skin Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#faf8f4;--cream2:#f3efe8;--dark:#1c221b;--sage:#3c4d3b;--sage2:#4a5c48;
+  --gold:#c9a96e;--gold2:#a07840;--gold3:#e8c88a;
+  --text:#2a332a;--muted:#6b7a6a;--border:#dce5db;--red:#c0392b;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+header{background:var(--dark);padding:40px 32px 36px;text-align:center;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;border-radius:50%;border:1px solid rgba(201,169,110,.08);pointer-events:none}
+.top-bar{height:4px;background:linear-gradient(to right,var(--gold2),var(--gold),var(--gold3),var(--gold),var(--gold2));position:absolute;top:0;left:0;right:0}
+.logo-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:2}
+.logo-mono{width:72px;height:72px}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;letter-spacing:3px;color:var(--cream)}
+.logo-sub{font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;font-weight:300;margin-top:-4px}
+.header-rule{width:80px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);margin:12px auto 0}
+.header-doc{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;font-style:italic;color:rgba(232,200,138,.65);margin-top:8px;letter-spacing:1px}
+.container{max-width:780px;margin:0 auto;padding:36px 24px 80px}
+.intro-card{background:var(--sage);border-radius:16px;padding:24px 28px;margin-bottom:32px;border:1px solid rgba(201,169,110,.15)}
+.intro-card p{font-size:13.5px;line-height:1.85;color:rgba(245,240,232,.65);font-weight:300}
+.intro-card p strong{color:var(--gold3);font-weight:500}
+.section{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px;box-shadow:0 2px 12px rgba(60,77,59,.05)}
+.section-header{background:var(--cream2);padding:16px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.section-icon{width:34px;height:34px;border-radius:9px;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--dark);letter-spacing:.5px}
+.section-body{padding:22px 26px;display:flex;flex-direction:column;gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);font-weight:500}
+.req{color:var(--red);margin-left:2px}
+.field input,.field select,.field textarea{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);outline:none;transition:border-color .2s,background .2s;width:100%;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);background:#fff}
+.field textarea{resize:vertical;min-height:80px;line-height:1.7}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a07840' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+.field-hint{font-size:11px;color:var(--muted);font-weight:300;margin-top:1px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.field-row{grid-template-columns:1fr}}
+.clabel{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);font-weight:500;margin-bottom:2px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+@media(max-width:600px){.cgrid{grid-template-columns:1fr 1fr}}
+.ci{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;transition:all .2s}
+.ci:has(input:checked){background:rgba(74,92,72,.08);border-color:var(--sage2)}
+.ci input{width:17px;height:17px;accent-color:var(--sage);flex-shrink:0;cursor:pointer}
+.ci label{font-size:13px;color:var(--text);font-weight:300;cursor:pointer}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:7px;margin-top:8px}
+.ri{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;transition:all .2s;text-align:center}
+.ri:has(input:checked){background:rgba(74,92,72,.1);border-color:var(--sage2)}
+.ri input{width:15px;height:15px;accent-color:var(--sage);cursor:pointer;flex-shrink:0}
+.ri label{font-size:13px;color:var(--text);font-weight:300;cursor:pointer}
+.scale-wrap{display:flex;flex-direction:column;gap:7px}
+.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.scale-opts{display:flex;gap:5px}
+.scale-opts label{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;transition:all .2s;cursor:pointer;font-size:13px;color:var(--text);font-weight:400}
+.scale-opts input{display:none}
+.scale-opts label:has(input:checked){background:var(--sage);color:#fff;border-color:var(--sage)}
+.sep{height:1px;background:var(--border);margin:2px 0}
+.terms-box{background:var(--cream2);border:1px solid var(--border);border-radius:12px;padding:18px 22px;font-size:13px;line-height:1.8;color:var(--muted)}
+.terms-box strong{color:var(--text);font-weight:500}
+.sign-area{border:1.5px solid var(--border);border-radius:8px;background:var(--cream);overflow:hidden;margin-top:2px;position:relative}
+.sign-ph{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:#aaa;letter-spacing:1px;pointer-events:none}
+canvas#signCanvas{display:block;touch-action:none;width:100%;height:150px}
+.sign-actions{display:flex;justify-content:flex-end;padding:7px 12px;border-top:1px solid var(--border);background:var(--cream2)}
+.sign-btn{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:1px;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .2s}
+.sign-btn:hover{border-color:var(--gold);color:var(--gold2)}
+.submit-wrap{text-align:center;margin-top:28px}
+.submit-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--sage);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:500;padding:17px 52px;border:none;border-radius:2px;cursor:pointer;transition:all .25s;width:100%;max-width:400px}
+.submit-btn:hover{background:var(--dark)}
+.submit-note{font-size:11px;color:var(--muted);margin-top:10px;font-weight:300;line-height:1.6}
+#successMsg{display:none;text-align:center;padding:56px 32px;background:#fff;border:1px solid var(--border);border-radius:16px;margin-top:20px}
+.ok-icon{font-size:48px;display:block;margin-bottom:18px}
+#successMsg h3{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--dark);margin-bottom:10px}
+#successMsg p{font-size:14px;color:var(--muted);font-weight:300;line-height:1.75;margin-bottom:20px}
+.pdf-btn{display:inline-flex;align-items:center;gap:10px;background:var(--gold2);color:#fff;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;padding:15px 36px;border:none;border-radius:2px;cursor:pointer;transition:all .25s}
+.pdf-btn:hover{background:var(--dark)}
+.pdf-btn svg{width:16px;height:16px;fill:#fff}
+.page-footer{background:var(--dark);padding:22px 32px;text-align:center;border-top:1px solid rgba(201,169,110,.1)}
+.page-footer p{font-size:11px;color:rgba(245,240,232,.25);letter-spacing:.5px}
+.page-footer span{color:rgba(201,169,110,.4)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top-bar"></div>
+  <div class="logo-wrap">
+    <svg class="logo-mono" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#d4a95a"/><stop offset="50%" stop-color="#f0cc80"/><stop offset="100%" stop-color="#b8872e"/>
+      </linearGradient></defs>
+      <path d="M40 8 Q51 24 40 40 Q29 24 40 8Z" fill="none" stroke="#C9A96E" stroke-width="1" opacity=".5"/>
+      <path d="M40 40 Q51 56 40 72 Q29 56 40 40Z" fill="none" stroke="#C9A96E" stroke-width="1" opacity=".5"/>
+      <path d="M8 40 Q24 29 40 40 Q24 51 8 40Z" fill="none" stroke="#C9A96E" stroke-width="1" opacity=".5"/>
+      <path d="M40 40 Q56 29 72 40 Q56 51 40 40Z" fill="none" stroke="#C9A96E" stroke-width="1" opacity=".5"/>
+      <circle cx="40" cy="40" r="31" fill="none" stroke="url(#lg)" stroke-width="1.5"/>
+      <circle cx="40" cy="40" r="26" fill="none" stroke="#C9A96E" stroke-width=".5" stroke-dasharray="2 3"/>
+      <path d="M26 58 L40 18 L54 58" fill="none" stroke="url(#lg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="31.5" y1="44" x2="48.5" y2="44" stroke="url(#lg)" stroke-width="3"/>
+      <path d="M52 26 Q28 26 28 40 Q28 54 52 54" fill="none" stroke="url(#lg)" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+    </svg>
+    <div class="logo-name">Ana Carolina</div>
+    <div class="logo-sub">Skin Care</div>
+    <div class="header-rule"></div>
+    <div class="header-doc">Ficha de Anamnese · Limpeza de Pele</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="intro-card">
+    <p>Olá! 🌿 Para que eu possa oferecer o <strong>melhor tratamento personalizado</strong> para a sua pele, peço que preencha esta ficha com atenção e sinceridade. Todas as informações são <strong>confidenciais</strong> e serão utilizadas exclusivamente para fins estéticos.</p>
+  </div>
+
+  <form id="anamneseForm" novalidate>
+
+    <!-- 1. DADOS PESSOAIS -->
+    <div class="section">
+      <div class="section-header"><div class="section-icon">👤</div><div class="section-title">Dados Pessoais</div></div>
+      <div class="section-body">
+        <div class="field"><label>Nome completo <span class="req">*</span></label><input type="text" id="f_nome" placeholder="Seu nome completo" required></div>
+        <div class="field-row">
+          <div class="field"><label>Data de nascimento <span class="req">*</span></label><input type="date" id="f_nasc" required></div>
+          <div class="field"><label>WhatsApp <span class="req">*</span></label><input type="tel" id="f_wha" placeholder="(21) 99999-0000" required></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>E-mail</label><input type="email" id="f_email" placeholder="seu@email.com"></div>
+          <div class="field"><label>Profissão</label><input type="text" id="f_prof" placeholder="Sua profissão"></div>
+        </div>
+        <div class="field"><label>Como nos conheceu?</label>
+          <select id="f_conh"><option value="">Selecione...</option><option>Instagram</option><option>Indicação de amiga/familiar</option><option>WhatsApp</option><option>Google</option><option>Outro</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. TIPO DE PELE -->
+    <div class="section">
+      <div class="section-header"><div class="section-icon">✨</div><div class="section-title">Tipo e Condição da Pele</div></div>
+      <div class="section-body">
+        <div>
+          <div class="clabel">Como você classifica sua pele? <span class="req">*</span></div>
+          <div class="rgrid">
+            <div class="ri"><input type="radio" name="tipo_pele" id="p_sec" value="Seca"><label for="p_sec">🌵 Seca</label></div>
+            <div class="ri"><input type="radio" name="tipo_pele" id="p_ole" value="Oleosa"><label for="p_ole">💧 Oleosa</label></div>
+            <div class="ri"><input type="radio" name="tipo_pele" id="p_mis" value="Mista"><label for="p_mis">⚖️ Mista</label></div>
+            <div class="ri"><input type="radio" name="tipo_pele" id="p_nor" value="Normal"><label for="p_nor">✅ Normal</label></div>
+            <div class="ri"><input type="radio" name="tipo_pele" id="p_sen" value="Sensível"><label for="p_sen">🌸 Sensível</label></div>
+            <div class="ri"><input type="radio" name="tipo_pele" id="p_ns" value="Não sei"><label for="p_ns">🤷 Não sei</label></div>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div>
+          <div class="clabel">Condições presentes (pode marcar mais de uma)</div>
+          <div class="cgrid">
+            <div class="ci"><input type="checkbox" id="c1"><label for="c1">🔴 Acne / Espinhas</label></div>
+            <div class="ci"><input type="checkbox" id="c2"><label for="c2">⚫ Cravos</label></div>
+            <div class="ci"><input type="checkbox" id="c3"><label for="c3">🟤 Manchas</label></div>
+            <div class="ci"><input type="checkbox" id="c4"><label for="c4">〰️ Linhas / Rugas</label></div>
+            <div class="ci"><input type="checkbox" id="c5"><label for="c5">🔬 Poros dilatados</label></div>
+            <div class="ci"><input type="checkbox" id="c6"><label for="c6">🌡️ Vermelhidão</label></div>
+            <div class="ci"><input type="checkbox" id="c7"><label for="c7">❄️ Descamação</label></div>
+            <div class="ci"><input type="checkbox" id="c8"><label for="c8">👁️ Olheiras</label></div>
+            <div class="ci"><input type="checkbox" id="c9"><label for="c9">↔️ Flacidez</label></div>
+            <div class="ci"><input type="checkbox" id="c10"><label for="c10">🔹 Cicatrizes</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ROTINA -->
+    <div class="section">
+      <div class="section-header"><div class="section-icon">🧴</div><div class="section-title">Rotina de Cuidados</div></div>
+      <div class="section-body">
+        <div>
+          <div class="clabel">Usa protetor solar diariamente? <span class="req">*</span></div>
+          <div class="rgrid">
+            <div class="ri"><input type="radio" name="protetor" id="pt1" value="Sim, sempre"><label for="pt1">✅ Sim, sempre</label></div>
+            <div class="ri"><input type="radio" name="protetor" id="pt2" value="Às vezes"><label for="pt2">🤏 Às vezes</label></div>
+            <div class="ri"><input type="radio" name="protetor" id="pt3" value="Não usa"><label for="pt3">❌ Não uso</label></div>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div>
+          <div class="clabel">Produtos que usa atualmente</div>
+          <div class="cgrid">
+            <div class="ci"><input type="checkbox" id="p1"><label for="p1">Sabonete facial</label></div>
+            <div class="ci"><input type="checkbox" id="p2"><label for="p2">Tônico</label></div>
+            <div class="ci"><input type="checkbox" id="p3"><label for="p3">Hidratante</label></div>
+            <div class="ci"><input type="checkbox" id="p4"><label for="p4">Sérum</label></div>
+            <div class="ci"><input type="checkbox" id="p5"><label for="p5">Esfoliante</label></div>
+            <div class="ci"><input type="checkbox" id="p6"><label for="p6">Maquiagem diária</label></div>
+            <div class="ci"><input type="checkbox" id="p7"><label for="p7">Nenhum</label></div>
+            <div class="ci"><input type="checkbox" id="p8"><label for="p8">Outros</label></div>
+          </div>
+        </div>
+        <div class="field"><label>Já realizou algum tratamento facial antes?</label>
+          <select id="f_trat"><option value="">Selecione...</option><option>Nunca fiz nenhum</option><option>Já fiz limpeza de pele</option><option>Já fiz peeling</option><option>Já fiz outros procedimentos</option></select>
+        </div>
+        <div class="field"><label>Como foi a experiência?</label><textarea id="f_exp" placeholder="Conte como foi..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- 4. SAÚDE -->
+    <div class="section">
+      <div class="section-header"><div class="section-icon">🏥</div><div class="section-title">Saúde e Contraindicações</div></div>
+      <div class="section-body">
+        <div>
+          <div class="clabel">Possui alguma das condições abaixo?</div>
+          <div class="cgrid">
+            <div class="ci"><input type="checkbox" id="s1"><label for="s1">Diabetes</label></div>
+            <div class="ci"><input type="checkbox" id="s2"><label for="s2">Pressão alta / baixa</label></div>
+            <div class="ci"><input type="checkbox" id="s3"><label for="s3">Tireoide</label></div>
+            <div class="ci"><input type="checkbox" id="s4"><label for="s4">Herpes labial</label></div>
+            <div class="ci"><input type="checkbox" id="s5"><label for="s5">Rosácea</label></div>
+            <div class="ci"><input type="checkbox" id="s6"><label for="s6">Dermatite</label></div>
+            <div class="ci"><input type="checkbox" id="s7"><label for="s7">Psoríase</label></div>
+            <div class="ci"><input type="checkbox" id="s8"><label for="s8">Gravidez / Amamentando</label></div>
+            <div class="ci"><input type="checkbox" id="s9"><label for="s9">Tratamento oncológico</label></div>
+            <div class="ci"><input type="checkbox" id="s10"><label for="s10">Nenhuma</label></div>
+          </div>
+        </div>
+        <div class="field"><label>Alergias conhecidas</label><textarea id="f_aler" placeholder="Descreva suas alergias ou escreva 'Nenhuma'..."></textarea></div>
+        <div class="field-row">
+          <div class="field"><label>Faz uso de medicamento?</label>
+            <select id="f_med"><option value="">Selecione...</option><option>Não</option><option>Sim — uso contínuo</option><option>Sim — uso eventual</option></select>
+          </div>
+          <div class="field"><label>Se sim, qual(is)?</label><input type="text" id="f_qmed" placeholder="Ex: anticoncepcional, Roacutan..."></div>
+        </div>
+        <div>
+          <div class="clabel">Usa ou usou recentemente?</div>
+          <div class="cgrid">
+            <div class="ci"><input type="checkbox" id="m1"><label for="m1">Isotretinoína (Roacutan)</label></div>
+            <div class="ci"><input type="checkbox" id="m2"><label for="m2">Ácidos / Retinol</label></div>
+            <div class="ci"><input type="checkbox" id="m3"><label for="m3">Antibióticos</label></div>
+            <div class="ci"><input type="checkbox" id="m4"><label for="m4">Nenhum</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. EXPECTATIVAS -->
+    <div class="section">
+      <div class="section-header"><div class="section-icon">🌟</div><div class="section-title">Expectativas</div></div>
+      <div class="section-body">
+        <div class="field"><label>Principal objetivo <span class="req">*</span></label>
+          <select id="f_obj" required><option value="">Selecione...</option><option>Limpar e desobstruir os poros</option><option>Reduzir a oleosidade</option><option>Tratar acne e espinhas</option><option>Melhorar a textura da pele</option><option>Cuidado e manutenção geral</option><option>Preparação para evento especial</option><option>Outro</option></select>
+        </div>
+        <div class="field">
+          <label>Como avalia sua pele hoje?</label>
+          <div class="scale-wrap" style="margin-top:6px">
+            <div class="scale-labels"><span>😟 Muito insatisfeita</span><span>😊 Muito satisfeita</span></div>
+            <div class="scale-opts">
+              <label><input type="radio" name="satisf" value="1">1</label>
+              <label><input type="radio" name="satisf" value="2">2</label>
+              <label><input type="radio" name="satisf" value="3">3</label>
+              <label><input type="radio" name="satisf" value="4">4</label>
+              <label><input type="radio" name="satisf" value="5">5</label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="clabel">Área de preocupação no rosto</div>
+          <div class="cgrid">
+            <div class="ci"><input type="checkbox" id="z1"><label for="z1">Testa</label></div>
+            <div class="ci"><input type="checkbox" id="z2"><label for="z2">Nariz</label></div>
+            <div class="ci"><input type="checkbox" id="z3"><label for="z3">Queixo</label></div>
+            <div class="ci"><input type="checkbox" id="z4"><label for="z4">Bochechas</label></div>
+            <div class="ci"><input type="checkbox" id="z5"><label for="z5">Área dos olhos</label></div>
+            <div class="ci"><input type="checkbox" id="z6"><label for="z6">Rosto todo</label></div>
+          </div>
+        </div>
+        <div class="field"><label>Observações adicionais</label><textarea id="f_obs" placeholder="Qualquer informação relevante..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- 6. TERMO E ASSINATURA -->
+    <div class="section">
+      <div class="section-header"><div class="section-icon">📋</div><div class="section-title">Termo de Consentimento</div></div>
+      <div class="section-body">
+        <div class="terms-box">
+          Declaro que as informações prestadas nesta ficha são <strong>verdadeiras e completas</strong>. Estou ciente de que a omissão de informações pode comprometer a qualidade e a segurança do tratamento.<br><br>
+          Autorizo a realização do procedimento de <strong>Limpeza de Pele</strong> por Ana Carolina Skin Care e estou ciente de que podem ocorrer vermelhidões temporárias, o que é normal após o procedimento.<br><br>
+          As informações fornecidas são <strong>confidenciais</strong> e utilizadas exclusivamente para fins de tratamento estético.
+        </div>
+        <div class="field">
+          <label>Assinatura digital <span class="req">*</span></label>
+          <div class="field-hint">Assine com o dedo (celular) ou com o mouse (computador)</div>
+          <div class="sign-area">
+            <div id="signPh" class="sign-ph">Assine aqui ✍️</div>
+            <canvas id="signCanvas" width="1400" height="300" style="width:100%;height:150px;display:block;touch-action:none"></canvas>
+            <div class="sign-actions"><button type="button" class="sign-btn" onclick="clearSign()">Limpar assinatura</button></div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Data de preenchimento <span class="req">*</span></label><input type="date" id="f_data" required></div>
+          <div class="field"><label>Cidade</label><input type="text" id="f_cidade" placeholder="São Gonçalo, RJ"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <button type="button" class="submit-btn" onclick="submitForm()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        Gerar ficha em PDF
+      </button>
+      <p class="submit-note">Após preencher, um PDF será gerado automaticamente.<br>Salve e envie para a Ana Carolina pelo WhatsApp.</p>
+    </div>
+  </form>
+
+  <div id="successMsg">
+    <span class="ok-icon">✦</span>
+    <h3>Ficha pronta!</h3>
+    <p>Obrigada, <strong id="nomeCliente"></strong>! 🌿<br>Clique abaixo para <strong>baixar sua ficha em PDF</strong>.<br>Depois envie o arquivo para a Ana Carolina pelo WhatsApp.</p>
+    <button class="pdf-btn" onclick="gerarPDF()">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17h8v1.5H8V17zm0-3h8v1.5H8V14zm0-3h5v1.5H8V11z"/></svg>
+      Baixar PDF da ficha
+    </button>
+    <p style="font-size:12px;color:var(--muted);margin-top:16px;font-weight:300">Após baixar, envie pelo WhatsApp:<br><strong style="color:var(--sage)">(21) 97650-4924</strong></p>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>© 2025 <span>Ana Carolina Skin Care</span> · São Gonçalo, RJ · <span>@carolinadias.estetica</span></p>
+</footer>
+
+<script>
+document.getElementById('f_data').valueAsDate = new Date();
+document.getElementById('f_cidade').value = 'São Gonçalo, RJ';
+
+// ASSINATURA
+const canvas = document.getElementById('signCanvas');
+const ctx = canvas.getContext('2d');
+let drawing = false, signed = false;
+ctx.strokeStyle = '#2a332a'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect(), sx = canvas.width/r.width, sy = canvas.height/r.height;
+  if (e.touches) return { x:(e.touches[0].clientX-r.left)*sx, y:(e.touches[0].clientY-r.top)*sy };
+  return { x:(e.clientX-r.left)*sx, y:(e.clientY-r.top)*sy };
+}
+canvas.addEventListener('mousedown', e => { drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); document.getElementById('signPh').style.display='none'; signed=true; });
+canvas.addEventListener('mousemove', e => { if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
+canvas.addEventListener('mouseup', () => drawing=false);
+canvas.addEventListener('mouseleave', () => drawing=false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); document.getElementById('signPh').style.display='none'; signed=true; }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }, {passive:false});
+canvas.addEventListener('touchend', () => drawing=false);
+function clearSign() { ctx.clearRect(0,0,canvas.width,canvas.height); document.getElementById('signPh').style.display='block'; signed=false; }
+
+// HELPERS
+function rad(name) { const el = document.querySelector(`[name="${name}"]:checked`); return el ? el.value : '—'; }
+function chk(ids, labels) {
+  const r = [];
+  ids.forEach((id,i) => { if(document.getElementById(id)?.checked) r.push(labels[i]); });
+  return r.length ? r.join(' · ') : 'Nenhuma';
+}
+function val(id) { return document.getElementById(id)?.value?.trim() || '—'; }
+
+// VALIDAÇÃO E SUBMIT
+function submitForm() {
+  if (!val('f_nome') || val('f_nome') === '—') { alert('Informe seu nome completo.'); return; }
+  if (!val('f_nasc') || val('f_nasc') === '—') { alert('Informe sua data de nascimento.'); return; }
+  if (!val('f_wha')  || val('f_wha')  === '—') { alert('Informe seu WhatsApp.'); return; }
+  if (rad('tipo_pele') === '—') { alert('Selecione o tipo de pele.'); return; }
+  if (rad('protetor')  === '—') { alert('Responda sobre o protetor solar.'); return; }
+  if (!val('f_obj') || val('f_obj') === '—') { alert('Selecione seu objetivo principal.'); return; }
+  if (!signed) { alert('Por favor, assine a ficha antes de continuar.'); return; }
+
+  document.getElementById('anamneseForm').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+  document.getElementById('nomeCliente').textContent = val('f_nome').split(' ')[0];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Gera automaticamente
+  setTimeout(gerarPDF, 600);
+}
+
+// GERA PDF
+function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const PW=210, PH=297, ML=16, MR=16, CW=210-ML-MR;
+  let y = 16;
+
+  const C = {
+    sage:   [60,77,59],   gold:   [160,120,64],  goldL: [201,169,110],
+    dark:   [28,34,27],   cream:  [250,248,244],  muted: [107,122,106],
+    text:   [42,51,42],   border: [220,229,219],  white: [255,255,255],
+    gold3:  [232,200,138]
+  };
+  const fc = c => doc.setFillColor(...c);
+  const tc = c => doc.setTextColor(...c);
+  const dc = c => doc.setDrawColor(...c);
+
+  // CABEÇALHO
+  fc(C.dark); doc.rect(0,0,PW,38,'F');
+  fc(C.gold); doc.rect(0,0,PW,1.2,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(17); tc(C.cream);
+  doc.text('ANA CAROLINA', PW/2, 13, {align:'center', charSpace:2});
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); tc(C.goldL);
+  doc.text('S K I N   C A R E', PW/2, 19, {align:'center'});
+  dc(C.goldL); doc.setLineWidth(0.3); doc.line(PW/2-20,22,PW/2+20,22);
+  doc.setFont('helvetica','italic'); doc.setFontSize(8); tc([190,175,145]);
+  doc.text('Ficha de Anamnese · Limpeza de Pele', PW/2, 27, {align:'center'});
+
+  // Data/hora no canto
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); tc([130,120,100]);
+  doc.text(new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}), PW-ML, 13, {align:'right'});
+
+  fc(C.gold); doc.rect(0,37,PW,1.2,'F');
+  y = 46;
+
+  // SEÇÃO
+  function sec(icon, title) {
+    if (y+12 > PH-18) { doc.addPage(); y=16; }
+    fc(C.sage); doc.rect(ML,y,CW,8,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); tc(C.cream);
+    doc.text(icon + '  ' + title, ML+3, y+5.5);
+    y += 11;
+  }
+
+  // LINHA
+  function linha(label, value) {
+    if (!value || value === '—') return;
+    if (y+7 > PH-18) { doc.addPage(); y=16; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(7); tc(C.gold);
+    doc.text(label.toUpperCase(), ML, y+3.5);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); tc(C.text);
+    const lines = doc.splitTextToSize(String(value), CW-50);
+    doc.text(lines, ML+52, y+3.5);
+    y += Math.max(7, lines.length*4.5+2);
+    dc(C.border); doc.setLineWidth(0.18);
+    doc.line(ML, y, ML+CW, y);
+    y += 2.5;
+  }
+
+  // DADOS
+  const nome    = val('f_nome');
+  const nascRaw = val('f_nasc');
+  let nasc = nascRaw;
+  if (nascRaw && nascRaw !== '—') { const [yy,mm,dd]=nascRaw.split('-'); nasc=`${dd}/${mm}/${yy}`; }
+  const dataRaw = val('f_data');
+  let dataf = dataRaw;
+  if (dataRaw && dataRaw !== '—') { const [yy,mm,dd]=dataRaw.split('-'); dataf=`${dd}/${mm}/${yy}`; }
+
+  sec('●', 'Dados Pessoais');
+  linha('Nome completo',     nome);
+  linha('Data de nascimento', nasc);
+  linha('WhatsApp',          val('f_wha'));
+  linha('E-mail',            val('f_email'));
+  linha('Profissão',         val('f_prof'));
+  linha('Como nos conheceu', val('f_conh'));
+
+  sec('●', 'Tipo e Condição da Pele');
+  linha('Tipo de pele', rad('tipo_pele'));
+  linha('Condições',    chk(['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'],
+    ['Acne/Espinhas','Cravos','Manchas','Linhas/Rugas','Poros dilatados','Vermelhidão','Descamação','Olheiras','Flacidez','Cicatrizes']));
+
+  sec('●', 'Rotina de Cuidados');
+  linha('Protetor solar',     rad('protetor'));
+  linha('Produtos usados',    chk(['p1','p2','p3','p4','p5','p6','p7','p8'],
+    ['Sabonete facial','Tônico','Hidratante','Sérum','Esfoliante','Maquiagem diária','Nenhum','Outros']));
+  linha('Trat. anterior',     val('f_trat'));
+  linha('Experiência',        val('f_exp'));
+
+  sec('●', 'Saúde e Contraindicações');
+  linha('Condições de saúde', chk(['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'],
+    ['Diabetes','Pressão alta/baixa','Tireoide','Herpes labial','Rosácea','Dermatite','Psoríase','Gravidez/Amamentando','Tratamento oncológico','Nenhuma']));
+  linha('Alergias',           val('f_aler'));
+  linha('Medicamentos',       val('f_med'));
+  linha('Qual medicamento',   val('f_qmed'));
+  linha('Uso recente',        chk(['m1','m2','m3','m4'],
+    ['Isotretinoína (Roacutan)','Ácidos/Retinol','Antibióticos','Nenhum']));
+
+  sec('●', 'Expectativas');
+  linha('Objetivo principal',   val('f_obj'));
+  linha('Satisfação atual',     rad('satisf') !== '—' ? rad('satisf')+'/5' : '—');
+  linha('Área de preocupação',  chk(['z1','z2','z3','z4','z5','z6'],
+    ['Testa','Nariz','Queixo','Bochechas','Área dos olhos','Rosto todo']));
+  linha('Observações',          val('f_obs'));
+
+  // ASSINATURA
+  if (y+48 > PH-18) { doc.addPage(); y=16; }
+  sec('●', 'Termo de Consentimento e Assinatura');
+
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); tc(C.muted);
+  const termo = 'Declaro que as informações prestadas são verdadeiras e completas. Autorizo a realização do procedimento de Limpeza de Pele por Ana Carolina Skin Care e estou ciente das condições do tratamento. Informações confidenciais, uso exclusivo para fins estéticos.';
+  const tLines = doc.splitTextToSize(termo, CW);
+  doc.text(tLines, ML, y);
+  y += tLines.length*4+5;
+
+  // Box assinatura
+  fc([248,246,242]); dc(C.border); doc.setLineWidth(0.3);
+  doc.rect(ML, y, CW, 26, 'FD');
+  try {
+    const sig = canvas.toDataURL('image/png');
+    doc.addImage(sig, 'PNG', ML+1, y+1, CW-2, 24);
+  } catch(e) {}
+  y += 29;
+
+  // Nome e data
+  dc(C.border); doc.setLineWidth(0.3);
+  doc.line(ML, y+5, ML+80, y+5);
+  doc.line(ML+CW-80, y+5, ML+CW, y+5);
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); tc(C.muted);
+  doc.text('Assinatura', ML+40, y+9, {align:'center'});
+  doc.text(`${val('f_cidade')}, ${dataf}`, ML+CW-40, y+9, {align:'center'});
+
+  // RODAPÉ EM TODAS AS PÁGINAS
+  const total = doc.getNumberOfPages();
+  for (let i=1; i<=total; i++) {
+    doc.setPage(i);
+    fc(C.dark); doc.rect(0,PH-12,PW,12,'F');
+    fc(C.gold); doc.rect(0,PH-12,PW,0.8,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(6.5); tc([140,130,110]);
+    doc.text('Ana Carolina Skin Care  ·  São Gonçalo, RJ  ·  @carolinadias.estetica  ·  (21) 97650-4924', PW/2, PH-5, {align:'center'});
+    tc([100,95,85]);
+    doc.text(`${i}/${total}`, PW-ML, PH-5, {align:'right'});
+  }
+
+  const nomeArq = nome.replace(/\s+/g,'_').toLowerCase().replace(/[^a-z0-9_]/g,'');
+  doc.save(`anamnese_${nomeArq}_anacarolina.pdf`);
+}
+</script>
+</body>
+</html>
